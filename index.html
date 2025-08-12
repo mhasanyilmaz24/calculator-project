@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Advanced Calculator with History</title>
+</head>
+<body>
+
+  <h2>Advanced Calculator</h2>
+
+  <div id="app"></div>
+  <h3>History</h3>
+  <ul id="history"></ul>
+
+  <script>
+    const app = document.getElementById("app");
+    const historyList = document.getElementById("history");
+
+    function startCalculator() {
+      app.innerHTML = "";
+
+      const label = document.createElement("label");
+      label.textContent = "How many numbers do you want to calculate with?";
+      const input = document.createElement("input");
+      input.type = "number";
+      input.min = "1";
+      input.placeholder = "Enter a number (min 1)";
+      
+      const button = document.createElement("button");
+      button.textContent = "Next";
+
+      button.onclick = () => {
+        const count = parseInt(input.value);
+        if (isNaN(count) || count < 1) {
+          alert("Please enter a number greater than or equal to 1.");
+          return;
+        }
+        generateInputs(count);
+      };
+
+      app.appendChild(label);
+      app.appendChild(document.createElement("br"));
+      app.appendChild(input);
+      app.appendChild(document.createElement("br"));
+      app.appendChild(document.createElement("br"));
+      app.appendChild(button);
+    }
+
+    function generateInputs(count) {
+      app.innerHTML = "";
+
+      const inputs = [];
+      for (let i = 0; i < count; i++) {
+        const input = document.createElement("input");
+        input.type = "number";
+        input.placeholder = `Number ${i + 1}`;
+        inputs.push(input);
+        app.appendChild(input);
+        app.appendChild(document.createElement("br"));
+      }
+
+      app.appendChild(document.createElement("br"));
+
+      if (count === 1) {
+        const advancedOps = [
+          { label: "Square (x²)", key: "square" },
+          { label: "Cube (x³)", key: "cube" },
+          { label: "Square Root (√x)", key: "sqrt" },
+          { label: "Absolute Value (|x|)", key: "abs" }
+        ];
+        advancedOps.forEach(op => {
+          const btn = document.createElement("button");
+          btn.textContent = op.label;
+          btn.onclick = () => {
+            const num = parseFloat(inputs[0].value);
+            const result = calculateAdvanced(op.key, num);
+            showResult(result.text);
+            addToHistory(result.history);
+          };
+          app.appendChild(btn);
+        });
+      } else {
+        const basicOps = [
+          { label: 'Add', key: 'add' },
+          { label: 'Subtract', key: 'subtract' },
+          { label: 'Multiply', key: 'multiply' },
+          { label: 'Divide', key: 'divide' }
+        ];
+        basicOps.forEach(op => {
+          const button = document.createElement("button");
+          button.textContent = op.label;
+          button.onclick = () => {
+            const result = calculateBasic(op.key, inputs);
+            showResult(result.text);
+            addToHistory(result.history);
+          };
+          app.appendChild(button);
+        });
+      }
+
+      app.appendChild(document.createElement("br"));
+      app.appendChild(document.createElement("br"));
+
+      const result = document.createElement("p");
+      result.id = "result";
+      app.appendChild(result);
+
+      const restartButton = document.createElement("button");
+      restartButton.textContent = "Restart Calculator";
+      restartButton.onclick = () => startCalculator();
+      app.appendChild(document.createElement("br"));
+      app.appendChild(document.createElement("br"));
+      app.appendChild(restartButton);
+    }
+
+    function calculateBasic(operation, inputs) {
+      const numbers = inputs.map(input => parseFloat(input.value));
+      if (numbers.some(isNaN)) {
+        return { text: "Error: Please enter all numbers.", history: null };
+      }
+
+      let result;
+      let expression = numbers.join(operation === 'add' ? ' + ' :
+                                   operation === 'subtract' ? ' - ' :
+                                   operation === 'multiply' ? ' × ' : ' ÷ ');
+
+      switch (operation) {
+        case 'add':
+          result = numbers.reduce((a, b) => a + b);
+          break;
+        case 'subtract':
+          result = numbers.reduce((a, b) => a - b);
+          break;
+        case 'multiply':
+          result = numbers.reduce((a, b) => a * b);
+          break;
+        case 'divide':
+          if (numbers.slice(1).includes(0)) {
+            return { text: "Error: Cannot divide by zero.", history: null };
+          }
+          result = numbers.reduce((a, b) => a / b);
+          break;
+        default:
+          return { text: "Unknown operation", history: null };
+      }
+
+      const finalResult = "Result: " + result.toFixed(2);
+      return { text: finalResult, history: `${expression} = ${result.toFixed(2)}` };
+    }
+
+    function calculateAdvanced(operation, number) {
+      if (isNaN(number)) {
+        return { text: "Error: Please enter a valid number.", history: null };
+      }
+
+      let result;
+      let historyText;
+      switch (operation) {
+        case 'square':
+          result = number * number;
+          historyText = `${number}² = ${result.toFixed(2)}`;
+          break;
+        case 'cube':
+          result = number * number * number;
+          historyText = `${number}³ = ${result.toFixed(2)}`;
+          break;
+        case 'sqrt':
+          if (number < 0) {
+            return { text: "Error: Cannot take square root of negative number.", history: null };
+          }
+          result = Math.sqrt(number);
+          historyText = `√${number} = ${result.toFixed(2)}`;
+          break;
+        case 'abs':
+          result = Math.abs(number);
+          historyText = `|${number}| = ${result.toFixed(2)}`;
+          break;
+        default:
+          return { text: "Unknown operation", history: null };
+      }
+
+      return { text: "Result: " + result.toFixed(2), history: historyText };
+    }
+
+    function showResult(text) {
+      document.getElementById("result").innerText = text;
+    }
+
+    function addToHistory(entry) {
+      if (!entry) return;
+      const li = document.createElement("li");
+      li.textContent = entry;
+      const firstItem = historyList.firstChild;
+      if (firstItem) {
+        historyList.insertBefore(li, firstItem);
+      } else {
+        historyList.appendChild(li);
+      }
+    }
+
+    startCalculator();
+  </script>
+
+</body>
+</html>
