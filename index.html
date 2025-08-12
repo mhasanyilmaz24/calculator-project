@@ -3,6 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <title>Advanced Calculator with History</title>
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    input[type="number"] {
+      padding: 10px;
+      margin: 8px;
+      width: 200px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 6px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 20px;
+      color: #222;
+    }
+
+    #history {
+      list-style: none;
+      padding: 0;
+      max-width: 600px;
+      margin: 20px auto;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    #history li {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+
+    #history li:last-child {
+      border-bottom: none;
+    }
+
+    label {
+      font-size: 18px;
+    }
+  </style>
 </head>
 <body>
 
